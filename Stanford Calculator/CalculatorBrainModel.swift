@@ -75,7 +75,6 @@ public struct CalculatorBrainModel {
             case .binaryOperation(let function):
                 if accumulator != nil {
                     self.pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!)
-                    // self.accumulator = nil          // Очищаем accumulator
                 }
             case .equals:
                 performPendingBinaryOperation()
