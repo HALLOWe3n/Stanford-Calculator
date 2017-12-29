@@ -22,7 +22,7 @@ class ViewController: UIViewController {
             
             let textCurrentlyInDisplay = display.text!   // Считываем значение из label
             display.text = textCurrentlyInDisplay + digit
-            
+           
         } else  {
             display.text = digit
             userIsInTheMiddleTyping = true
