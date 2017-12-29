@@ -23,23 +23,44 @@ func changeSign(operation: Double) -> Double {              // Глобальн�
     return -operation
 }
 
+func multiply(op1: Double, op2: Double) -> Double {         // Возвращает результат умножения 2-х операндов
+    return op1 * op2
+}
+
 public struct CalculatorBrainModel {
 
     // MARK: Module (Public API)
     
-    private var accumulator: Double?    // Свойство - накопитель
+    private var accumulator: Double?                     // Свойство - накопитель
     
     private enum Operation {
-        case constant(Double)                           // Ассоциированное значение
-        case unaryOperation((Double) -> Double)         // Функция так-же может быть ассоциированным значением
+        case constant(Double)                            // Ассоциированное значение
+        case unaryOperation((Double) -> Double)          // Функция так-же может быть ассоциированным значением (унарная операция)
+        case binaryOperation((Double, Double) -> Double) // Бинарная операция
+        case equals
     }
     
-    private var operations: Dictionary<String, Operation> = [       // словарь - операций
-        "π": Operation.constant(Double.pi),               // PI - 3.1415926...
-        "e": Operation.constant(M_E),                     // e = 2.71...
-        "√": Operation.unaryOperation(sqrt),              // SQRT
-        "cos": Operation.unaryOperation(cos),             // COS
-        "±": Operation.unaryOperation(changeSign)         // ± (плюс и минус)
+    private var pendingBinaryOperation: PendingBinaryOperation?
+    
+    private struct PendingBinaryOperation {             // структура для запоминаия бинарных операций (Cтруктура​,которая “удерживает” две вещи)
+        
+        let function: (Double, Double) -> Double
+        let firstOperand: Double
+        
+        func perform(with secondOperand: Double) -> Double {
+            return function(firstOperand, secondOperand)
+        }
+    }
+    
+    private var operations: Dictionary<String, Operation> = [        // словарь - операций
+        "π": Operation.constant(Double.pi),                          // PI - 3.1415926...
+        "e": Operation.constant(M_E),                                // e = 2.71...
+        "√": Operation.unaryOperation(sqrt),                         // SQRT
+        "cos": Operation.unaryOperation(cos),                        // COS
+        "±": Operation.unaryOperation(changeSign),                   // ± (плюс и минус)
+        "×": Operation.binaryOperation(multiply),                    // × (умножение)
+        "=": Operation.equals,                                        // = (равно)
+        
     ]
     
     public mutating func performOperation(_ symbol: String) {       // функция по работе с символами
@@ -51,7 +72,21 @@ public struct CalculatorBrainModel {
                 if accumulator != nil {
                     self.accumulator = function(accumulator!)
                 }
+            case .binaryOperation(let function):
+                if accumulator != nil {
+                    self.pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!)
+                    // self.accumulator = nil          // Очищаем accumulator
+                }
+            case .equals:
+                performPendingBinaryOperation()
             }
+        }
+    }
+    
+    private mutating func performPendingBinaryOperation() {
+        if pendingBinaryOperation != nil && accumulator != nil {
+            self.accumulator = pendingBinaryOperation!.perform(with: accumulator!)
+            self.pendingBinaryOperation = nil
         }
     }
     
