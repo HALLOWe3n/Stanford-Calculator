@@ -48,7 +48,7 @@ public struct CalculatorBrainModel {
         "π": Operation.constant(Double.pi),                          // PI - 3.1415926...
         "e": Operation.constant(M_E),                                // e = 2.71...
         "√": Operation.unaryOperation(sqrt),                         // SQRT
-        "cos": Operation.unaryOperatilson(cos),                        // COS
+        "cos": Operation.unaryOperation(cos),                        // COS
         "±": Operation.unaryOperation({ -$0 }),                      // ± (плюс и минус)
         "×": Operation.binaryOperation({ $0 * $1 }),                 // × (умножение) (Замыкание)
         "÷": Operation.binaryOperation({ $0 / $1 }),                 // ÷ (деление) (Замыкание)
