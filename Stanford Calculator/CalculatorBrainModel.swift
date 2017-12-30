@@ -19,14 +19,6 @@ import Foundation
         2) Может быть типом ассоциированного значения
 **/
 
-func changeSign(operation: Double) -> Double {              // Глобальная функция (принимает значение и возв. со знаком)
-    return -operation
-}
-
-func multiply(op1: Double, op2: Double) -> Double {         // Возвращает результат умножения 2-х операндов
-    return op1 * op2
-}
-
 public struct CalculatorBrainModel {
 
     // MARK: Module (Public API)
@@ -56,11 +48,13 @@ public struct CalculatorBrainModel {
         "π": Operation.constant(Double.pi),                          // PI - 3.1415926...
         "e": Operation.constant(M_E),                                // e = 2.71...
         "√": Operation.unaryOperation(sqrt),                         // SQRT
-        "cos": Operation.unaryOperation(cos),                        // COS
-        "±": Operation.unaryOperation(changeSign),                   // ± (плюс и минус)
-        "×": Operation.binaryOperation(multiply),                    // × (умножение)
-        "=": Operation.equals,                                        // = (равно)
-        
+        "cos": Operation.unaryOperatilson(cos),                        // COS
+        "±": Operation.unaryOperation({ -$0 }),                      // ± (плюс и минус)
+        "×": Operation.binaryOperation({ $0 * $1 }),                 // × (умножение) (Замыкание)
+        "÷": Operation.binaryOperation({ $0 / $1 }),                 // ÷ (деление) (Замыкание)
+        "+": Operation.binaryOperation({ $0 + $1 }),                 // + (сложение) (Замыкание)
+        "-": Operation.binaryOperation({ $0 - $1 }),                 // - (вычитание) (Замыкание)
+        "=": Operation.equals,                                       // = (равно)
     ]
     
     public mutating func performOperation(_ symbol: String) {       // функция по работе с символами
