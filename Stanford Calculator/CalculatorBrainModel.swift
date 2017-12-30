@@ -85,13 +85,11 @@ public struct CalculatorBrainModel {
     }
     
     public mutating func setOperand(_ operand: Double) { // функция которая устанавливает операнд   (mutating - слово, которое способствует изменению структуры)
-        
         self.accumulator = operand      // Получаем и записываем операнд в свойство accumulator
     }
     
     var result: Double? {        // результирущая переменная (Optional)
         get {
-            print("I'm here!")
             return self.accumulator
         }
     }
