@@ -22,13 +22,7 @@ class ViewController: UIViewController {
         if userIsInTheMiddleTyping {
             let textCurrentlyInDisplay = display.text!   // Считываем значение из label
             
-            if textCurrentlyInDisplay.contains(dotSymbol) {
-                if digit.contains(dotSymbol) {
-                    self.display.text = textCurrentlyInDisplay
-                } else {
-                    self.display.text = textCurrentlyInDisplay + digit
-                }
-            } else {
+            if !(textCurrentlyInDisplay.contains(dotSymbol) && digit.contains(dotSymbol)) {
                 self.display.text = textCurrentlyInDisplay + digit
             }
             
