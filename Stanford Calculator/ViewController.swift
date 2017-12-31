@@ -17,14 +17,23 @@ class ViewController: UIViewController {
     
     @IBAction func touchDigit(_ sender: UIButton) {  // @IBAction -> пометка Xcode (Сообщает что метод привязан к кнопке)
         let digit = sender.currentTitle!
+        let dotSymbol = "."
         
         if userIsInTheMiddleTyping {
-            
             let textCurrentlyInDisplay = display.text!   // Считываем значение из label
-            display.text = textCurrentlyInDisplay + digit
-           
-        } else  {
-            display.text = digit
+            
+            if textCurrentlyInDisplay.contains(dotSymbol) {
+                if digit.contains(dotSymbol) {
+                    self.display.text = textCurrentlyInDisplay
+                } else {
+                    self.display.text = textCurrentlyInDisplay + digit
+                }
+            } else {
+                self.display.text = textCurrentlyInDisplay + digit
+            }
+            
+        } else if !digit.contains(dotSymbol) {
+            self.display.text = digit
             userIsInTheMiddleTyping = true
         }
     }
@@ -35,7 +44,7 @@ class ViewController: UIViewController {
             return Double(display.text!)!           // Разворачиваем и возвращаем значение
         }
         set {
-            display.text = String(newValue)         // Записываем новое значение
+            self.display.text = String(newValue)         // Записываем новое значение
         }
     }
     

@@ -30,7 +30,7 @@ public struct CalculatorBrainModel {
         case unaryOperation((Double) -> Double)          // Функция так-же может быть ассоциированным значением (унарная операция)
         case binaryOperation((Double, Double) -> Double) // Бинарная операция
         case equals
-        case dotOperation
+        
     }
     
     private var pendingBinaryOperation: PendingBinaryOperation?
@@ -56,7 +56,6 @@ public struct CalculatorBrainModel {
         "+": Operation.binaryOperation({ $0 + $1 }),                 // + (сложение) (Замыкание)
         "-": Operation.binaryOperation({ $0 - $1 }),                 // - (вычитание) (Замыкание)
         "=": Operation.equals,                                       // = (равно)
-        ".": Operation.dotOperation
     ]
     
     public mutating func performOperation(_ symbol: String) {       // функция по работе с символами
@@ -75,9 +74,6 @@ public struct CalculatorBrainModel {
                 }
             case .equals:
                 performPendingBinaryOperation()
-            case .dotOperation:
-                
-                break
             }
         }
     }
