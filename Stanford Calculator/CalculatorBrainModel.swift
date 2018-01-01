@@ -19,6 +19,15 @@ import Foundation
         2) Может быть типом ассоциированного значения
 **/
 
+/*  Global Function */
+func factorial(number: Double) -> Double {
+    if  number > 1 {
+        return number * factorial(number: number - 1)
+    } else {
+        return number
+    }
+}
+
 public struct CalculatorBrainModel {
 
     // MARK: Module (Public API)
@@ -49,7 +58,11 @@ public struct CalculatorBrainModel {
         "π": Operation.constant(Double.pi),                          // PI - 3.1415926...
         "e": Operation.constant(M_E),                                // e = 2.71...
         "√": Operation.unaryOperation(sqrt),                         // SQRT
+        "x!": Operation.unaryOperation(factorial),                   // factorial (p!)
+        "x2": Operation.unaryOperation({ $0 * $0 }),                 // x2
         "cos": Operation.unaryOperation(cos),                        // COS
+        "sin": Operation.unaryOperation(sin),                        // SIN
+        "tg": Operation.unaryOperation(tan),                         // TAN
         "±": Operation.unaryOperation({ -$0 }),                      // ± (плюс и минус)
         "×": Operation.binaryOperation({ $0 * $1 }),                 // × (умножение) (Замыкание)
         "÷": Operation.binaryOperation({ $0 / $1 }),                 // ÷ (деление) (Замыкание)

@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     
     // MARK: Controller
     
-    @IBOutlet weak var display: UILabel!        // Разворачиваем display сразу чтобы не ставить знак (!) после display
+    @IBOutlet weak var display: UILabel!        // Expand display at once to not put a sign (!) After display
     var userIsInTheMiddleTyping = false         // Хранимое свойство
     
     @IBAction func touchDigit(_ sender: UIButton) {  // @IBAction -> пометка Xcode (Сообщает что метод привязан к кнопке)
@@ -22,11 +22,11 @@ class ViewController: UIViewController {
         if userIsInTheMiddleTyping {
             let textCurrentlyInDisplay = display.text!   // Считываем значение из label
             
-            if !(textCurrentlyInDisplay.contains(dotSymbol) && digit.contains(dotSymbol)) {
+            if !(textCurrentlyInDisplay.contains(dotSymbol) && digit.contains(dotSymbol)) {     // Проверка на содержание точки в textCurrentlyInDisplay
                 self.display.text = textCurrentlyInDisplay + digit
             }
             
-        } else if !digit.contains(dotSymbol) {
+        } else if !digit.contains(dotSymbol) {      // Проверка на присутствие точки в самом начале
             self.display.text = digit
             userIsInTheMiddleTyping = true
         }
