@@ -41,11 +41,11 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="49" height="82.5"/>
                                                         <color key="backgroundColor" red="1" green="0.64125372759999999" blue="0.1881680097" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                                        <state key="normal" title="tg">
+                                                        <state key="normal" title="C">
                                                             <color key="titleColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="performOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tgE-L6-zFd"/>
+                                                            <action selector="clearOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0nA-Nf-hE0"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9hY-TS-UOO">

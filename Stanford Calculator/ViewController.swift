@@ -35,10 +35,14 @@ class ViewController: UIViewController {
     // MARK: property for label
     var displayValue: Double {                       // Вычесляемое свойство
         get {
-            return Double(display.text!)!           // Разворачиваем и возвращаем значение
+            return Double(display.text!)!          // Разворачиваем и возвращаем значение
         }
         set {
-            self.display.text = String(newValue)         // Записываем новое значение
+            if newValue.truncatingRemainder(dividingBy: 2) == 0 {
+                self.display.text = String(Int(newValue))         // Записываем новое значение
+            } else {
+                self.display.text = String(newValue)
+            }
         }
     }
     
@@ -59,5 +63,11 @@ class ViewController: UIViewController {
         if let result = modelBrain.result {                 // Optional binding
             self.displayValue = result
         }
+    }
+    
+    @IBAction func clearOperation(_ sender: UIButton) {
+        self.display.text = "0"
+        self.displayValue = 0
+        self.userIsInTheMiddleTyping = false
     }
 }

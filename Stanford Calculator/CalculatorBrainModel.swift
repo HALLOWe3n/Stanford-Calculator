@@ -19,6 +19,8 @@ import Foundation
         2) Может быть типом ассоциированного значения
 **/
 
+
+
 /*  Global Function */
 func factorial(number: Double) -> Double {
     if  number > 1 {
@@ -33,6 +35,9 @@ public struct CalculatorBrainModel {
     // MARK: Module (Public API)
     
     private var accumulator: Double?                     // Свойство - накопитель
+    private var resultIsPending: Bool = false
+    private var description: String?
+    private var pendingBinaryOperation: PendingBinaryOperation?
     
     private enum Operation {
         case constant(Double)                            // Ассоциированное значение
@@ -41,8 +46,6 @@ public struct CalculatorBrainModel {
         case equals
         
     }
-    
-    private var pendingBinaryOperation: PendingBinaryOperation?
     
     private struct PendingBinaryOperation {             // структура для запоминаия бинарных операций (Cтруктура​,которая “удерживает” две вещи)
         
@@ -62,7 +65,6 @@ public struct CalculatorBrainModel {
         "x2": Operation.unaryOperation({ $0 * $0 }),                 // x2
         "cos": Operation.unaryOperation(cos),                        // COS
         "sin": Operation.unaryOperation(sin),                        // SIN
-        "tg": Operation.unaryOperation(tan),                         // TAN
         "±": Operation.unaryOperation({ -$0 }),                      // ± (плюс и минус)
         "×": Operation.binaryOperation({ $0 * $1 }),                 // × (умножение) (Замыкание)
         "÷": Operation.binaryOperation({ $0 / $1 }),                 // ÷ (деление) (Замыкание)
@@ -76,13 +78,22 @@ public struct CalculatorBrainModel {
             switch operation {
             case .constant(let value):                  // извлекаем значение
                 self.accumulator = value
+                
+                self.description = symbol + " " + String(describing: self.accumulator!)     // Последовательность операции
+                print(self.description!)
             case .unaryOperation(let function):         // извлекаем значение
                 if accumulator != nil {
                     self.accumulator = function(accumulator!)
+                    
+                    self.description = symbol + " " + String(describing: self.accumulator!)     // Последовательность операции
+                    print(self.description!)
                 }
             case .binaryOperation(let function):
                 if accumulator != nil {
+                    self.resultIsPending = true             // Указываю что операция отложена
                     self.pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!)
+                    self.description = String(describing: self.accumulator!) + " " + symbol
+                    
                     self.accumulator = nil              // Перевожу "Первый операнд в состояние non-set" чтобы значение не записалось в display (Controller)
                 }
             case .equals:
@@ -93,6 +104,7 @@ public struct CalculatorBrainModel {
     
     private mutating func performPendingBinaryOperation() {
         if pendingBinaryOperation != nil && accumulator != nil {
+            self.resultIsPending = false                    // Указываю что операция не являеться отложенной
             self.accumulator = pendingBinaryOperation!.perform(with: accumulator!)
             self.pendingBinaryOperation = nil                   // убираю значение левого и правого операндов для следующей операции
         }
