@@ -8,11 +8,11 @@
 
 import UIKit
 
+// MARK: Controller
 class ViewController: UIViewController {
     
-    // MARK: Controller
-    
     @IBOutlet weak var display: UILabel!        // Expand display at once to not put a sign (!) After display
+    @IBOutlet weak var displayOperations: UILabel!
     var userIsInTheMiddleTyping = false         // Хранимое свойство
     
     @IBAction func touchDigit(_ sender: UIButton) {  // @IBAction -> пометка Xcode (Сообщает что метод привязан к кнопке)
@@ -46,6 +46,13 @@ class ViewController: UIViewController {
         }
     }
     
+    var operationValue: String? {       // Вычесляемое свойство (для передачи операций над числами)
+        get { return nil }
+        set {
+            self.displayOperations.text = newValue
+        }
+    }
+    
     // MARK: Include Model for (MVC)
     private var modelBrain = CalculatorBrainModel()    // Подключаем Model (логику)
     
@@ -63,11 +70,9 @@ class ViewController: UIViewController {
         if let result = modelBrain.result {                 // Optional binding
             self.displayValue = result
         }
-    }
-    
-    @IBAction func clearOperation(_ sender: UIButton) {
-        self.display.text = "0"
-        self.displayValue = 0
-        self.userIsInTheMiddleTyping = false
+        
+        if let resultOperation = modelBrain.resultOperation {
+            self.operationValue = resultOperation
+        }
     }
 }

@@ -22,8 +22,8 @@ import Foundation
 
 
 /*  Global Function */
-func factorial(number: Double) -> Double {
-    if  number > 1 {
+func factorial(number: Double) -> Double {                                                          // Факториал числа (p!) - рекурсия
+    if  number > 1 && number < 21 {
         return number * factorial(number: number - 1)
     } else {
         return number
@@ -34,20 +34,21 @@ public struct CalculatorBrainModel {
 
     // MARK: Module (Public API)
     
-    private var accumulator: Double?                     // Свойство - накопитель
+    private var accumulator: Double?                                                                    // Свойство - накопитель
     private var resultIsPending: Bool = false
     private var description: String?
     private var pendingBinaryOperation: PendingBinaryOperation?
     
     private enum Operation {
-        case constant(Double)                            // Ассоциированное значение
-        case unaryOperation((Double) -> Double)          // Функция так-же может быть ассоциированным значением (унарная операция)
-        case binaryOperation((Double, Double) -> Double) // Бинарная операция
+        case constant(Double)                                                                           // Ассоциированное значение
+        case unaryOperation((Double) -> Double)                                                         // Функция так-же может быть ассоциированным значением (унарная операция)
+        case binaryOperation((Double, Double) -> Double)                                                // Бинарная операция
         case equals
+        case clear
         
     }
     
-    private struct PendingBinaryOperation {             // структура для запоминаия бинарных операций (Cтруктура​,которая “удерживает” две вещи)
+    private struct PendingBinaryOperation {                                                             // структура для запоминаия бинарных операций (Cтруктура​,которая “удерживает” две вещи)
         
         let function: (Double, Double) -> Double
         let firstOperand: Double
@@ -57,66 +58,75 @@ public struct CalculatorBrainModel {
         }
     }
     
-    private var operations: Dictionary<String, Operation> = [        // словарь - операций
-        "π": Operation.constant(Double.pi),                          // PI - 3.1415926...
-        "e": Operation.constant(M_E),                                // e = 2.71...
-        "√": Operation.unaryOperation(sqrt),                         // SQRT
-        "x!": Operation.unaryOperation(factorial),                   // factorial (p!)
-        "x2": Operation.unaryOperation({ $0 * $0 }),                 // x2
-        "cos": Operation.unaryOperation(cos),                        // COS
-        "sin": Operation.unaryOperation(sin),                        // SIN
-        "±": Operation.unaryOperation({ -$0 }),                      // ± (плюс и минус)
-        "×": Operation.binaryOperation({ $0 * $1 }),                 // × (умножение) (Замыкание)
-        "÷": Operation.binaryOperation({ $0 / $1 }),                 // ÷ (деление) (Замыкание)
-        "+": Operation.binaryOperation({ $0 + $1 }),                 // + (сложение) (Замыкание)
-        "-": Operation.binaryOperation({ $0 - $1 }),                 // - (вычитание) (Замыкание)
-        "=": Operation.equals,                                       // = (равно)
+    private var operations: Dictionary<String, Operation> = [                                           // словарь - операций
+        "π": Operation.constant(Double.pi),                                                             // PI - 3.1415926...
+        "e": Operation.constant(M_E),                                                                   // e = 2.71...
+        "√": Operation.unaryOperation(sqrt),                                                            // SQRT
+        "x!": Operation.unaryOperation(factorial),                                                      // factorial (p!)
+        "x2": Operation.unaryOperation({ $0 * $0 }),                                                    // x2
+        "cos": Operation.unaryOperation(cos),                                                           // COS
+        "sin": Operation.unaryOperation(sin),                                                           // SIN
+        "±": Operation.unaryOperation({ -$0 }),                                                         // ± (плюс и минус)
+        "×": Operation.binaryOperation({ $0 * $1 }),                                                    // × (умножение) (Замыкание)
+        "÷": Operation.binaryOperation({ $0 / $1 }),                                                    // ÷ (деление) (Замыкание)
+        "+": Operation.binaryOperation({ $0 + $1 }),                                                    // + (сложение) (Замыкание)
+        "-": Operation.binaryOperation({ $0 - $1 }),                                                    // - (вычитание) (Замыкание)
+        "=": Operation.equals,                                                                          // = (равно)
+        "C": Operation.clear                                                                            // Очистка
     ]
     
-    public mutating func performOperation(_ symbol: String) {       // функция по работе с символами
+    public mutating func performOperation(_ symbol: String) {                                           // функция по работе с символами
         if let operation = operations[symbol] {
             switch operation {
-            case .constant(let value):                  // извлекаем значение
+            case .constant(let value):                                                                  // извлекаем значение
                 self.accumulator = value
                 
-                self.description = symbol + " " + String(describing: self.accumulator!)     // Последовательность операции
+                self.description = symbol + " " + String(describing: self.accumulator!)                // Последовательность операции
                 print(self.description!)
-            case .unaryOperation(let function):         // извлекаем значение
+            case .unaryOperation(let function):                                                         // извлекаем значение
                 if accumulator != nil {
+                    self.description = symbol + " (" + String(describing: self.accumulator!) + ")"    // Последовательность операции
                     self.accumulator = function(accumulator!)
                     
-                    self.description = symbol + " " + String(describing: self.accumulator!)     // Последовательность операции
-                    print(self.description!)
                 }
             case .binaryOperation(let function):
                 if accumulator != nil {
                     self.resultIsPending = true             // Указываю что операция отложена
                     self.pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!)
-                    self.description = String(describing: self.accumulator!) + " " + symbol
+                    self.description = "(" + String(describing: self.accumulator!) + " " + symbol
                     
-                    self.accumulator = nil              // Перевожу "Первый операнд в состояние non-set" чтобы значение не записалось в display (Controller)
+                    self.accumulator = nil                                                           // Перевожу "Первый операнд в состояние non-set" чтобы значение не записалось в display (Controller)
                 }
             case .equals:
                 performPendingBinaryOperation()
+            case .clear:
+                self.pendingBinaryOperation = nil                                                   // Очистка бинарных операций
+                self.accumulator = 0                                                                // Очистка содержимого на дисплее и в переменной
+                self.description = "Operations"                                                     // Очистка содержимого описания
             }
         }
     }
     
     private mutating func performPendingBinaryOperation() {
         if pendingBinaryOperation != nil && accumulator != nil {
-            self.resultIsPending = false                    // Указываю что операция не являеться отложенной
+            self.resultIsPending = false                                                             // Указываю что операция не являеться отложенной
             self.accumulator = pendingBinaryOperation!.perform(with: accumulator!)
-            self.pendingBinaryOperation = nil                   // убираю значение левого и правого операндов для следующей операции
+            self.pendingBinaryOperation = nil                                                        // убираю значение левого и правого операндов для следующей операции
         }
     }
     
-    public mutating func setOperand(_ operand: Double) { // функция которая устанавливает операнд   (mutating - слово, которое способствует изменению структуры)
-        self.accumulator = operand      // Получаем и записываем операнд в свойство accumulator
+    public mutating func setOperand(_ operand: Double) {                                             // функция которая устанавливает операнд   (mutating - слово, которое способствует изменению структуры)
+        self.accumulator = operand                                                                    // Получаем и записываем операнд в свойство accumulator
     }
     
-    var result: Double? {        // результирущая переменная (Optional)
+    var result: Double? {                                                                             // результирущая переменная (Optional)
         get {
             return self.accumulator
+        }
+    }
+    var resultOperation: String? {                                                                    // Переменная возвращающая описание операций
+        get {
+            return self.description
         }
     }
 }
