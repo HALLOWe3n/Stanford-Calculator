@@ -38,7 +38,7 @@ class ViewController: UIViewController {
             return Double(display.text!)!          // Разворачиваем и возвращаем значение
         }
         set {
-            if newValue.truncatingRemainder(dividingBy: 2) == 0 {
+            if newValue.truncatingRemainder(dividingBy: 1.0) == 0 {
                 self.display.text = String(Int(newValue))         // Записываем новое значение
             } else {
                 self.display.text = String(newValue)
