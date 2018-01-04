@@ -11,9 +11,9 @@ import UIKit
 // MARK: Controller
 class ViewController: UIViewController {
     
-    @IBOutlet weak var display: UILabel!        // Expand display at once to not put a sign (!) After display
-    @IBOutlet weak var displayOperations: UILabel!
-    var userIsInTheMiddleTyping = false         // Хранимое свойство
+    @IBOutlet weak var display: UILabel!             // Expand display at once to not put a sign (!) After display
+    @IBOutlet weak var displayDescription: UILabel!  // Хранимое свойство (Содержит в себе описание)
+    var userIsInTheMiddleTyping = false              // Хранимое свойство
     
     @IBAction func touchDigit(_ sender: UIButton) {  // @IBAction -> пометка Xcode (Сообщает что метод привязан к кнопке)
         let digit = sender.currentTitle!
@@ -38,7 +38,8 @@ class ViewController: UIViewController {
             return Double(display.text!)!          // Разворачиваем и возвращаем значение
         }
         set {
-            if newValue.truncatingRemainder(dividingBy: 1.0) == 0 {
+                print(newValue)
+            if newValue.truncatingRemainder(dividingBy: 1.0) == 0 && newValue < Double(Int.max) {
                 self.display.text = String(Int(newValue))         // Записываем новое значение
             } else {
                 self.display.text = String(newValue)
@@ -49,7 +50,7 @@ class ViewController: UIViewController {
     var operationValue: String? {       // Вычесляемое свойство (для передачи операций над числами)
         get { return nil }
         set {
-            self.displayOperations.text = newValue
+            self.displayDescription.text = newValue
         }
     }
     
@@ -63,11 +64,11 @@ class ViewController: UIViewController {
             userIsInTheMiddleTyping = false
         }
         
-        if let mathemaicalSymbol = sender.currentTitle {    // Проверка на nil
+        if let mathemaicalSymbol = sender.currentTitle {          // Проверка на nil
             self.modelBrain.performOperation(mathemaicalSymbol)  // передача математического символа к функции performOperation (MODEL)
         }
         
-        if let result = modelBrain.result {                 // Optional binding
+        if let result = modelBrain.result {                     // Optional binding
             self.displayValue = result
         }
         

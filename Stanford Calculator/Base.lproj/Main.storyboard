@@ -356,7 +356,7 @@
                     </view>
                     <connections>
                         <outlet property="display" destination="kHQ-20-Skj" id="j1v-Rn-Xbp"/>
-                        <outlet property="displayOperations" destination="cCG-Wk-0qc" id="MkR-zw-z9K"/>
+                        <outlet property="displayDescription" destination="cCG-Wk-0qc" id="MkR-zw-z9K"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
